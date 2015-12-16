@@ -1,4 +1,6 @@
 int resultIndex = 0;
+
+// Takes in Array and Result Array with its Index
 int* findAllSubsets(int array[3], int* result[100], int arrayIndex){
     if (arrayIndex == 0){
         int emptyArray[100] = {null};
