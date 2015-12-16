@@ -18,10 +18,11 @@
 			width: 100%;
 		}
 	</style>
-	<script src="https://threejs.org/build/three.min.js"></script>
 	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script src="application.js"></script>
+	<script src="artist.js"></script>
+	<script src="ui.js"></script>
 </head>
-
 <body>
 
 		
@@ -93,6 +94,8 @@ Your browser does not support the canvas element.
 			}
 
 		</script>
+
+
 <script>
 	/* Global Vars */
 	
@@ -101,288 +104,45 @@ Your browser does not support the canvas element.
 		canvasIdTag: "myCanvas",
 		canvasDimensions: {x: document.body.clientWidth, y: document.body.clientHeight}
 	};
-    /*
-    *  APPLIACTION RUNNER
-    *  Purpose: Create Application and Refresh it Every Frame
-    */
-	var ApplicationRunner = {};
-	
-	ApplicationRunner.canvasContext = null;
-	ApplicationRunner.canvas = null;
-	ApplicationRunner.currentlySelectedButton = null;
-	
-	ApplicationRunner.UI = {
-		header: [], 
-		subHeader: null,
-		items: null,
-		window: null
-	};
-	
-	ApplicationRunner.initializeCanvas = function(canvasIdTag, canvasDimensions){
-		var canvas = document.getElementById(canvasIdTag);
-		canvas.width = canvasDimensions.x; //document.width is obsolete
-	    canvas.height = canvasDimensions.y; //document.height is obsolete
-		var context = canvas.getContext("2d");
-		this.canvasContext = context;
-		this.ThreeDCanvas = document.getElementById("3DCanvas");
-		this.ThreeDCanvasContext = document.getElementById("3DCanvas").getContext("webgl");
+    
+    $(document).ready(function(){
+    	/*
+		 * ENTRY POINT
+		 */
+		// Inititalize Application Runner
+		ApplicationRunner.initializeCanvas(canvasObject.canvasIdTag, canvasObject.canvasDimensions);
 		
-		this.canvas = canvas;
-		return context;
-	};
-	
-	ApplicationRunner.runAnimationLoop = function(callback){
-		callback();
-		setTimeout(function(){
-			ApplicationRunner.runAnimationLoop(callback);
-		}, 1000/60);
-	};
-	
-	/*
-    *  UI 
-    *  Purpose: Modular object that allows to easy modify parameters of UI components
-    */
-    var UI = {};
-    
-    UI.button = function(){
-    	return {
-    		selected: false,
-			direction: "horizontal",
-			offset: {x: 20, y: 0},
-    		buttonBox: {x: 0, y: 0, width: 100, height: 40, fillStyle: {selected: "#2D3129", unselected: "#2D3129"}},
-    		text: {value: "", font: "30px Arial Narrow", fillStyle: {selected: "#69FB8F", unselected: "#69FB8F"}}
-    	};
-    },
-    
-    UI.background = {
-    	draw: function(){
-    		Artist.draw("background", {color: "#2D3129"});
-    	}	
-    },
-    
-    UI.header = {
-    	buttons: [
-    		{
-    			name: "STAT",
-    			response: function(){},
-    			buttonParameters: UI.button()
-    		}, 
-    		{
-    			name: "SKILLS",
-    			response: function(){alert("Woohoo!");},
-    			buttonParameters: UI.button()
-    		},
-    		{
-    			name: "PROJ",
-    			response: function(){},
-    			buttonParameters: UI.button()
-    		},
-    		{
-    			name: "CONT",
-    			response: function(){},
-    			buttonParameters: UI.button()
-    		},
-    		{
-    			name: "RADIO",
-    			response: function(){},
-    			buttonParameters: UI.button()
-    		}
-    	],
-    	
-    	draw: function(){
-    		Artist.draw("header-line", null);
-    		for (var buttonIndex = 0; buttonIndex < this.buttons.length; buttonIndex++){
-    			var centeredPosition = ApplicationRunner.canvas.width/2 - this.buttons.length*(this.buttons[0].buttonParameters.buttonBox.width + this.buttons[0].buttonParameters.offset.x)/2;
-    			this.buttons[buttonIndex].buttonParameters.buttonBox.x = centeredPosition + buttonIndex*this.buttons[buttonIndex].buttonParameters.buttonBox.width + this.buttons[buttonIndex].buttonParameters.offset.x*buttonIndex;
-    			this.buttons[buttonIndex].buttonParameters.buttonBox.y = 0;
-    			this.buttons[buttonIndex].buttonParameters.text.value = this.buttons[buttonIndex].name;
-    			Artist.draw("header-button", this.buttons[buttonIndex].buttonParameters);
-    		}
-    		
-    	}	
-    };
-    
-    UI.stats = {
-    	items: [
-    		{
-    			name: "Strength",
-    			response: null,
-    			buttonParameters: UI.button()
-    		},
-    		{
-    			name: "Perception",
-    			response: null,
-    			buttonParameters: UI.button()
-    		},
-    		{
-    			name: "Endurance",
-    			response: null,
-    			buttonParameters: UI.button()
-    		},
-    		{
-    			name: "Charisma",
-    			response: null,
-    			buttonParameters: UI.button()
-    		},
-    		{
-    			name: "Agility",
-    			response: null,
-    			buttonParameters: UI.button()
-    		},
-    		{
-    			name: "Luck",
-    			response: null,
-    			buttonParameters: UI.button()
-    		}
-    	],
-    	
-    	draw: function(){
-    		this.items[0].buttonParameters.selected = true;
-    		for (var itemIndex = 0; itemIndex < this.items.length; itemIndex++){
-    			this.items[itemIndex].buttonParameters.buttonBox.width = 400;
-    			var centeredPosition = ApplicationRunner.canvas.width/2 - UI.stats.items[0].buttonParameters.buttonBox.width;
-    			this.items[itemIndex].buttonParameters.buttonBox.x = centeredPosition;
-    			this.items[itemIndex].buttonParameters.buttonBox.y = UI.header.buttons[0].buttonParameters.buttonBox.height*2 + itemIndex*this.items[itemIndex].buttonParameters.buttonBox.height + this.items[itemIndex].buttonParameters.offset.y*itemIndex;
-    			
-    			this.items[itemIndex].buttonParameters.buttonBox.fillStyle.selected = "#69FB8F";
-    			this.items[itemIndex].buttonParameters.text.value = this.items[itemIndex].name;
-    			this.items[itemIndex].buttonParameters.text.fillStyle.selected = "#2D3129";
-    			this.items[itemIndex].buttonParameters.value = "50";
-    			Artist.draw("item-button", this.items[itemIndex].buttonParameters);
-    		}
-    	}
-    };
-    
-    /*
-    *  ARTIST 
-    *  Purpose: Responsible for drawing the UI components
-    */
-    var Artist = {};
-    Artist.context = null;
-    Artist.wrapText = function(text, x, y, maxWidth, lineHeight) {
-        var words = text.split(' ');
-        var line = '';
-
-        for(var n = 0; n < words.length; n++) {
-          var testLine = line + words[n] + ' ';
-          var metrics = ApplicationRunner.canvasContext.measureText(testLine);
-          var testWidth = metrics.width;
-          if (testWidth > maxWidth && n > 0) {
-            ApplicationRunner.canvasContext.fillText(line, x, y);
-            line = words[n] + ' ';
-            y += lineHeight;
-          }
-          else {
-            line = testLine;
-          }
-        }
-        ApplicationRunner.canvasContext.fillText(line, x, y);
-      };
-    Artist.draw = function(type, parameters){
-    	this.context.lineWidth = 2;
-    	switch(type){
-    		case "background":
-    			this.context.beginPath();
-				this.context.fillStyle = parameters.color;
-				this.context.rect(0, 0, document.body.clientWidth, document.body.clientHeight);
-				this.context.fill();
-				break;
-				
-    		case "header-button":
-    			if (parameters.selected == true){
-		    		// Start Drawing Button Box
-		    		this.context.beginPath();
-					this.context.fillStyle = parameters.buttonBox.fillStyle.unselected;
-					this.context.rect(parameters.buttonBox.x , parameters.buttonBox.y, parameters.buttonBox.width, parameters.buttonBox.height);
-					this.context.fill();
-					// Selected Notches
-					this.context.beginPath();
-					this.context.moveTo(parameters.buttonBox.x , parameters.buttonBox.y + parameters.buttonBox.height);
-					this.context.lineTo(parameters.buttonBox.x , parameters.buttonBox.y + parameters.buttonBox.height/2);
-					this.context.stroke();
-					this.context.beginPath();
-					this.context.moveTo(parameters.buttonBox.x + parameters.buttonBox.width, parameters.buttonBox.y + parameters.buttonBox.height);
-					this.context.lineTo(parameters.buttonBox.x + parameters.buttonBox.width , parameters.buttonBox.y + parameters.buttonBox.height/2);
-					this.context.stroke();
-    			}
-				// Text
-				this.context.fillStyle = parameters.text.fillStyle.unselected;
-				this.context.font = parameters.text.font;
-				this.context.fillText(parameters.text.value, parameters.buttonBox.x + 5, parameters.buttonBox.y + 30);
-				
-				break;
-			
-			case "item-button":
-				this.context.fillStyle = parameters.text.fillStyle.unselected;
-				
-    			if (parameters.selected == true){
-		    		// Start Drawing Button Box
-		    		this.context.beginPath();
-					this.context.fillStyle = parameters.buttonBox.fillStyle.selected;
-					this.context.rect(parameters.buttonBox.x , parameters.buttonBox.y, parameters.buttonBox.width, parameters.buttonBox.height);
-					this.context.fill();
-					this.context.fillStyle = parameters.text.fillStyle.selected;
-    			}
-				// Text
-				this.context.font = parameters.text.font;
-				this.context.fillText(parameters.text.value, parameters.buttonBox.x + 5, parameters.buttonBox.y + 30);
-				this.context.fillText(parameters.value, parameters.buttonBox.x + parameters.buttonBox.width - 50 , parameters.buttonBox.y + 30);
-				break;	
-			
-			case "header-line":
-				this.context.beginPath();
-				this.context.strokeStyle = "#69FB8F";
-				this.context.moveTo(0,39);
-				this.context.lineTo(ApplicationRunner.canvas.width,39);
-				this.context.stroke();
-				break;
-		}
-				
-    };
+		// Initialize Controls
+		ApplicationRunner.initializeControls();
+		
+		// Initialize Artist
+		var ArtistObject = Artist(ApplicationRunner.canvasContext, ApplicationRunner);
+		// Animation Loop
+		ApplicationRunner.runAnimationLoop(function(){
+			ArtistObject.draw("background");
+			ArtistObject.draw("header");
+			ArtistObject.draw("list-menu");
+			ArtistObject.draw("content");
+			/*
+			var ImageData = ApplicationRunner.canvasContext.getImageData(0, 0, ApplicationRunner.canvas.width, ApplicationRunner.canvas.height);
+			var data = ImageData.data;
+			var counter = 0;
+			var switcher = 0;
+			for (var i = 0; i < data.length; i += 4) {
+				if (switcher){
+					data[i]     = counter%3==0?data[i+1]:data[i]-10; // red
+			        data[i + 1] = counter%3==1?data[i+1]:data[i+1]-10; // green
+			        data[i + 2] = counter%3==2?data[i+2]:data[i+2]-10; // blue
+				}
+		      	counter++;
+		      	switcher = !switcher;
+		    }
+		    ApplicationRunner.canvasContext.putImageData(ImageData, 0, 0);
+		    */
+		});
+    });
 	
 	/*
-	 * ENTRY POINT
-	 */
-	Artist.context = ApplicationRunner.initializeCanvas(canvasObject.canvasIdTag, canvasObject.canvasDimensions);
-	ApplicationRunner.UI.header = UI.header.buttons;
-	ApplicationRunner.runAnimationLoop(function(){
-		UI.background.draw();
-		UI.stats.draw();
-		UI.header.draw();
-		ApplicationRunner.canvasContext.drawImage(ApplicationRunner.ThreeDCanvas, ApplicationRunner.canvas.width/2 + 100, 80, 200, 200);
-		Artist.wrapText("Strength is a measure of your raw physical power!", ApplicationRunner.canvas.width/2 + 100, 320, 200, 30);
-		var ImageData = ApplicationRunner.canvasContext.getImageData(0, 0, ApplicationRunner.canvas.width, ApplicationRunner.canvas.height);
-		var data = ImageData.data;
-		var counter = 0;
-		var switcher = 0;
-		for (var i = 0; i < data.length; i += 4) {
-			if (switcher){
-				data[i]     = counter%3==0?data[i+1]:data[i]-10; // red
-		        data[i + 1] = counter%3==1?data[i+1]:data[i+1]-10; // green
-		        data[i + 2] = counter%3==2?data[i+2]:data[i+2]-10; // blue
-			}
-		  	
-	      	counter++;
-	      	switcher = !switcher;
-	    }
-	    ApplicationRunner.canvasContext.putImageData(ImageData, 0, 0);
-		/*
-		ApplicationRunner.postProcessingCanvasContext.drawImage(ApplicationRunner.canvas, 0, 0);
-		var imageData = ApplicationRunner.postProcessingCanvasContext.getImageData(0,0,1000,500);
-		var data = imageData.data;
-		var counter = 0;
-		for (var i = 0; i < data.length; i += 4) {
-		  if (counter%3==0){
-		  	data[i]     = (i)%3==0?data[i]:10;     // red
-	        data[i + 1] = (i)%3==1?data[i+1]:10; // green
-	        data[i + 2] = (i)%3==2?data[i+2]:10; // blue
-		  }
-	      counter++;
-	    }
-	    ApplicationRunner.postProcessingCanvasContext.putImageData(imageData, 0, 0);
-	    */
-	});
-	
 	document.onkeypress=function(ev){
 		if (ev.keyCode == 13){
 			ApplicationRunner.currentlySelectedButton.response();
@@ -402,10 +162,7 @@ Your browser does not support the canvas element.
 		}
 	};
 	
-	
-	
-	
+	*/
 </script>
-
 </body>
 </html>

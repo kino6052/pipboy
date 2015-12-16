@@ -44,11 +44,10 @@
     /*
      * Creates Linked List of Interconnected Buttons
      */
-    UI.createGraphFromJSON = function(){
+    UI.createGraphFromJSON = function(){ // TODO: Look into making this code more modular and readable
         var headerKey, listMenuKey;
         $.each(json, function(value){
             headerKey = getKey(json[value]);
-            
             if (UI.head == null) {
                 // null <- [ head | tail ] -> null
                 UI.head = UI.tail = HeaderButton(headerKey, null, null);
