@@ -231,6 +231,7 @@ var json = [
               var counter = 0;
               var currentButton = this;
               while (currentButton != null){
+                  currentButton = currentButton.nextButton;
                   counter++;
               }
               return counter;

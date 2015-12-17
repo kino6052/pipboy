@@ -7,7 +7,8 @@ function Artist(context, applicationRunnerContext){
         context: context,
         globalStyle: {
             background: {
-                color: '#2D3129'
+                color: '#2D3129',
+                width: window.innerWidth
             },
             header: {
                 lineWidth: applicationRunnerContext.canvas.width
@@ -17,23 +18,23 @@ function Artist(context, applicationRunnerContext){
             	fontSize: 20,
                 font: 'Arial Narrow',
                 position: {
-                	x: 600,
-                	y: 200
+                	x: window.innerWidth/2 + 20,
+                	y: 430
                 },
                 size: {
-                	width: 400,
+                	width: window.innerWidth/4,
                 	lineHeight: 20
                 }
             },
             image: {
             	
                 position: {
-                	x: 600,
-                	y: 400
+                	x: window.innerWidth/2 + 20,
+                	y: 80
                 },
                 size: {
-                	width: 400,
-                	height: 400
+                	width: window.innerWidth/4,
+                	height: window.innerWidth/4
                 }
             },
             button: {
@@ -56,20 +57,20 @@ function Artist(context, applicationRunnerContext){
                     
                 },
                 position: {x: 0, y: 0},
-                size: {width: 200, height: 80},
+                size: {width: 200, height: 50},
                 offset: 10
             },
             listMenuButton: {
                 text: {
-                    size: '20px',
+                    size: 20,
                     font: 'Arial Narrow',
                     color: {
                         selected: '#2D3129',
                         unselected: '#69FB8F'
                     }
                 },
-                position: {x: 0, y: 0},
-                size: {width: 400, height: 80},
+                position: {x: window.innerWidth/4 - 20, y: 80},
+                size: {width: window.innerWidth/4, height: 40},
                 offset: 10,
                 color: {
                     selected: '#69FB8F',
@@ -77,13 +78,11 @@ function Artist(context, applicationRunnerContext){
                 }
             },
             content: {
-                size: '18px',
+                size: 18,
                 font: 'Arial Narrow'
             }
         },
-        initialize: function(){
-          this.context.lineWidth = 2;
-        },
+        
         wrapText: function(text, x, y, maxWidth, lineHeight) {
             this.context.font = this.responsiveHelper(this.globalStyle.text.fontSize) + "px " + this.globalStyle.content.font;
             var words = text.split(' ');
@@ -96,7 +95,7 @@ function Artist(context, applicationRunnerContext){
               if (testWidth > maxWidth && n > 0) {
                 this.context.fillText(line, x, y);
                 line = words[n] + ' ';
-                y += this.responsiveHelper(lineHeight);
+                y += this.responsiveHelper(20);
               }
               else {
                 line = testLine;
@@ -104,11 +103,11 @@ function Artist(context, applicationRunnerContext){
             }
             this.context.fillText(line, x, y);
         },
-        responsiveHelper: function(fontSize){
-        	return Math.floor(fontSize * window.innerWidth/screen.width);
+        responsiveHelper: function(size){
+        	return size;//Math.floor(size * window.innerWidth/screen.width);
         },
         center: function(width, length){
-        	return window.innerWidth/2 - width*length/2; 
+        	return this.responsiveHelper(this.globalStyle.background.width)/2 - width*length/2; 
         },
         draw: function(type, name, index, selected){
         	
@@ -144,18 +143,19 @@ function Artist(context, applicationRunnerContext){
         			if(!!currentButton && !!currentButton.imageId && !!document.getElementById(currentButton.imageId)) this.draw("image", currentButton.imageId);
         			break;
         		case "image":
-        			var x = this.globalStyle.image.position.x;
-        			var y = this.globalStyle.image.position.y;
-        			var width = this.globalStyle.image.size.width;
-        			var height = this.globalStyle.image.size.height;
+        			var width = this.responsiveHelper(this.globalStyle.image.size.width);
+        			var height = this.responsiveHelper(this.globalStyle.image.size.height);
+        			var x = this.responsiveHelper(this.globalStyle.image.position.x);
+        			var y = this.responsiveHelper(this.globalStyle.image.position.y);
         			var image = document.getElementById(name);
         			this.context.drawImage(image, x, y, width, height);
         			break;
         		case "text":
-        			var x = this.globalStyle.text.position.x;
-        			var y = this.globalStyle.text.position.y;
-        			var maxWidth = this.globalStyle.text.size.width;
-        			var lineHeight = this.globalStyle.text.size.lineHeight;
+        			
+        			var maxWidth = this.responsiveHelper(this.globalStyle.text.size.width);
+        			var lineHeight = this.responsiveHelper(this.globalStyle.text.size.lineHeight);
+        			var x = this.responsiveHelper(this.globalStyle.text.position.x);
+        			var y = this.responsiveHelper(this.globalStyle.text.position.y);
         			this.context.fillStyle = this.globalStyle.text.color;
         			this.context.font = Math.floor(this.globalStyle.text.fontSize * window.innerWidth/1024) + "px " + this.globalStyle.text.font;
         			this.wrapText(name, x, y, maxWidth, lineHeight);
@@ -163,7 +163,7 @@ function Artist(context, applicationRunnerContext){
         		case "header-button":
         		    var width = this.responsiveHelper(this.globalStyle.headerButton.size.width);
         		    var height = this.responsiveHelper(this.globalStyle.headerButton.size.height);
-        		    var x = this.responsiveHelper(this.center(UI.head.getLength(), width));
+        		    var x = this.center(UI.head.getLength(), width); // centered position should not be normalized
         		    var y = this.responsiveHelper(this.globalStyle.headerButton.position.y);
         			if (selected == true){
         	    		// Start Drawing Button Box
@@ -177,7 +177,7 @@ function Artist(context, applicationRunnerContext){
         				this.context.lineTo(x + width*index, y + height/2);
         				this.context.stroke();
         				this.context.beginPath();
-        				this.context.moveTo(x + width*index, y + height);
+        				this.context.moveTo(x + width*index + width, y + height);
         				this.context.lineTo(x + width*index + width, y + height/2);
         				this.context.stroke();
         			}
@@ -185,13 +185,15 @@ function Artist(context, applicationRunnerContext){
         			this.context.fillStyle = this.globalStyle.button.text.color.selected;
         			var fontSize = this.responsiveHelper(this.globalStyle.headerButton.text.size);
         			this.context.font = fontSize<15?15:fontSize + "px " + this.globalStyle.headerButton.text.font;
-        			this.context.fillText(name, x + width*index + this.responsiveHelper(5), y + this.responsiveHelper(35));
+        			var offset = width/2 - this.context.measureText(name).width/2;
+        			this.context.fillText(name, offset + x + width*index + this.responsiveHelper(5), y + this.responsiveHelper(35));
         			break;
         		case "list-menu-button":
-        		    var x = this.globalStyle.listMenuButton.position.x;
-        		    var y = this.globalStyle.listMenuButton.position.y;
-        		    var width = this.globalStyle.listMenuButton.size.width;
-        		    var height = this.globalStyle.listMenuButton.size.height;
+        		    
+        		    var width = this.responsiveHelper(this.globalStyle.listMenuButton.size.width);
+        		    var height = this.responsiveHelper(this.globalStyle.listMenuButton.size.height);
+        		    var x = this.responsiveHelper(this.globalStyle.listMenuButton.position.x);
+        		    var y = this.responsiveHelper(this.globalStyle.listMenuButton.position.y);
         		    this.context.fillStyle = this.globalStyle.listMenuButton.text.color.unselected;
         			if (selected == true){
         	    		// Start Drawing Button Box
@@ -202,8 +204,9 @@ function Artist(context, applicationRunnerContext){
         				this.context.fillStyle = this.globalStyle.listMenuButton.text.color.selected;
         			}
         			// Text
-        			this.context.font = this.globalStyle.listMenuButton.text.size + " " + this.globalStyle.listMenuButton.text.font;
-        			this.context.fillText(name, x + 5, y + height*index  + 30);
+        			var fontSize = this.responsiveHelper(this.globalStyle.listMenuButton.text.size);
+        			this.context.font = fontSize<12?12:fontSize + "px " + this.globalStyle.listMenuButton.text.font;
+        			this.context.fillText(name, x + this.responsiveHelper(5), y + height*index  + this.responsiveHelper(30));
         			break;
         		case "item-button":
         		    /*
@@ -225,10 +228,12 @@ function Artist(context, applicationRunnerContext){
         		    */
         		    break;
         		case "header-line":
+                    this.context.lineWidth = 2;
+        		    var height = this.responsiveHelper(this.globalStyle.headerButton.size.height);
         			this.context.beginPath();
         			this.context.strokeStyle = "#69FB8F";
-        			this.context.moveTo(0,39);
-        			this.context.lineTo(this.globalStyle.header.lineWidth, 39);
+        			this.context.moveTo(0, height-1);
+        			this.context.lineTo(window.innerWidth, height-1);
         			this.context.stroke();
         			break;
         	}
