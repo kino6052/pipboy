@@ -34,7 +34,7 @@
 	    this.selectedListMenuButton = UI.head.listHead; // first button from the list menu
 	    $("body").keypress(function(ev){
     		if (ev.keyCode == 13){
-    			alert("test");
+    			
     		}
     		else if (ev.keyCode == 113){
     		    ApplicationRunner.selectedButton = ApplicationRunner.selectedButton.selectPrev();

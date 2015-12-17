@@ -5,42 +5,42 @@ var json = [
                 "Problem Solving": {
                     rating: "80/100",
                     imageId: "problem-solving",
-                    text: "Strong problem solving skills. Not afraid tackling new problems and think outside the box."
+                    text: "1 Strong problem solving skills. Not afraid tackling new problems and think outside the box."
                 }
             },
             {
                 "Communication": {
                     rating: "75/100",
                     imageId: "communication",
-                    text: "Strong problem solving skills. Not afraid tackling new problems and think outside the box."
+                    text: "2 Strong problem solving skills. Not afraid tackling new problems and think outside the box."
                 }
             },
             {
                 "Swiftness": {
                     rating: "90/100",
                     imageId: "swiftness",
-                    text: "Strong problem solving skills. Not afraid tackling new problems and think outside the box."
+                    text: "3 Strong problem solving skills. Not afraid tackling new problems and think outside the box."
                 }
             },
             {
                 "Curiosity": {
                     rating: "80/100",
                     imageId: "problem-solving",
-                    text: "Strong problem solving skills. Not afraid tackling new problems and think outside the box."
+                    text: "4 Strong problem solving skills. Not afraid tackling new problems and think outside the box."
                 }
             },
             {
                 "Knowledge": {
                     rating: "80/100",
                     imageId: "problem-solving",
-                    text: "Strong problem solving skills. Not afraid tackling new problems and think outside the box."
+                    text: "5 Strong problem solving skills. Not afraid tackling new problems and think outside the box."
                 }
             },
             {
                 "Personality": {
                     rating: "80/100",
                     imageId: "problem-solving",
-                    text: "Strong problem solving skills. Not afraid tackling new problems and think outside the box."
+                    text: "6 Strong problem solving skills. Not afraid tackling new problems and think outside the box."
                 }
             }
         ]
@@ -144,18 +144,24 @@ var json = [
      * Creates Linked List of Interconnected Buttons
      */
     UI.createGraphFromJSON = function(){ // TODO: Look into making this code more modular and readable
-        var headerKey, listMenuKey;
+        var headerKey, listMenuKey, listMenuObject;
+        // HEADER MENU
         $.each(json, function(value){
             headerKey = getKey(json[value]);
             if (UI.head == null) {
                 // null <- [ head | tail ] -> null
                 UI.head = UI.tail = HeaderButton(headerKey, null, null);
+                // LIST MENU
                 $.each(json[value][UI.head.name], function(listMenuIndex){
+                    listMenuObject = json[value][headerKey][listMenuIndex];
                     listMenuKey = getKey(json[value][headerKey][listMenuIndex]);
                     if (UI.head.listHead == null){
                         // [ HeaderButton ] -> [ List Head ]
                         // null <- [ List Head | List Tail ] -> null
                         UI.tail.listHead = UI.tail.listTail = ListMenuButton(listMenuKey, null, null);
+                        // Set content
+                        UI.tail.listHead.text = listMenuObject[listMenuKey].text;
+                        UI.tail.listHead.imageId = listMenuObject[listMenuKey].imageId;
                     }
                     else {
                         // null <- [ List Head | List Tail ] <- [ ListMenuButton ] -> null
@@ -164,6 +170,9 @@ var json = [
                         UI.tail.listTail.nextButton = newListMenuButton;
                         // null <- [ List Head ] <-> [ ListMenuButton | List Tail ] -> null
                         UI.tail.listTail = newListMenuButton;
+                        // Set content
+                        newListMenuButton.text = listMenuObject[listMenuKey].text;
+                        newListMenuButton.imageId = listMenuObject[listMenuKey].imageId;
                     }
                     console.log(UI.tail.listTail);
                 });
@@ -175,13 +184,18 @@ var json = [
                 UI.tail.nextButton = newHeaderButton;
                 // null <- [ head ] <-> [ newHeaderButton | tail ] -> null
                 UI.tail = newHeaderButton;
+                // LIST MENU
                 $.each(json[value][UI.tail.name], function(listMenuIndex){
                     if (headerKey == "CONTACT") return; // CONTACT has non-formal structure, should be handled separtely
+                    listMenuObject = json[value][headerKey][listMenuIndex];
                     listMenuKey = getKey(json[value][headerKey][listMenuIndex]);
                     if (UI.tail.listHead == null){
                         // [ HeaderButton ] -> [ List Head ]
                         // null <- [ List Head | List Tail ] -> null
                         UI.tail.listHead = UI.tail.listTail = ListMenuButton(listMenuKey, null, null);
+                        // Set content
+                        UI.tail.listHead.text = listMenuObject[listMenuKey].text;
+                        UI.tail.listHead.imageId = listMenuObject[listMenuKey].imageId;
                     }
                     else {
                         // null <- [ List Head | List Tail ] <- [ ListMenuButton ] -> null
@@ -190,6 +204,9 @@ var json = [
                         UI.tail.listTail.nextButton = newListMenuButton;
                         // null <- [ List Head ] <-> [ ListMenuButton | List Tail ] -> null
                         UI.tail.listTail = newListMenuButton;
+                        // Set content
+                        newListMenuButton.text = listMenuObject[listMenuKey].text;
+                        newListMenuButton.imageId = listMenuObject[listMenuKey].imageId;
                     }
                     console.log(UI.tail.listTail);
                 });
@@ -210,16 +227,24 @@ var json = [
             draw: function(){
                 
             },
+            getLength: function(){
+              var counter = 0;
+              var currentButton = this;
+              while (currentButton != null){
+                  counter++;
+              }
+              return counter;
+            },
             selectNext: function(){
                 var selectedButton;
                 this.nextButton == null?selectedButton=UI.head:selectedButton=this.nextButton;
-    			alert(selectedButton.name);
+    			
     			return selectedButton;
             },
             selectPrev: function(){
                 var selectedButton;
                 this.prevButton == null?selectedButton=UI.tail:selectedButton=this.prevButton;
-    			alert(selectedButton.name);
+    			
     			return selectedButton;
             }
         };
@@ -233,19 +258,19 @@ var json = [
             name: name,
             prevButton: prev,
             nextButton: next,
+            text: "",
+            imageId: "",
             draw: function(){
                 
             },
             selectNext: function(head){
                 var selectedButton;
                 this.nextButton == null?selectedButton=head:selectedButton=this.nextButton;
-    			alert(selectedButton.name);
     			return selectedButton;
             },
             selectPrev: function(tail){
                 var selectedButton;
                 this.prevButton == null?selectedButton=tail:selectedButton=this.prevButton;
-    			alert(selectedButton.name);
     			return selectedButton;
             }
         };

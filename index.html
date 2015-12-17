@@ -26,7 +26,7 @@
 <body>
 
 		
-<img id="img" src="" style="display: none;">
+<img id="problem-solving" src="http://ak-hdl.buzzfed.com/static/2015-11/4/13/enhanced/webdr11/enhanced-17040-1446660609-11.jpg" style="display: none;">
 <canvas id="myCanvas">
 Your browser does not support the canvas element.
 </canvas>
@@ -99,18 +99,14 @@ Your browser does not support the canvas element.
 <script>
 	/* Global Vars */
 	
-	// CANVAS
-	var canvasObject = {
-		canvasIdTag: "myCanvas",
-		canvasDimensions: {x: document.body.clientWidth, y: document.body.clientHeight}
-	};
+	
     
     $(document).ready(function(){
     	/*
 		 * ENTRY POINT
 		 */
 		// Inititalize Application Runner
-		ApplicationRunner.initializeCanvas(canvasObject.canvasIdTag, canvasObject.canvasDimensions);
+		ApplicationRunner.initializeCanvas("myCanvas", {x: 0, y: 0});
 		
 		// Initialize Controls
 		ApplicationRunner.initializeControls();
@@ -119,6 +115,8 @@ Your browser does not support the canvas element.
 		var ArtistObject = Artist(ApplicationRunner.canvasContext, ApplicationRunner);
 		// Animation Loop
 		ApplicationRunner.runAnimationLoop(function(){
+			ApplicationRunner.canvas.width = $("body").width();
+			ApplicationRunner.canvas.height = $("body").height();
 			ArtistObject.draw("background");
 			ArtistObject.draw("header");
 			ArtistObject.draw("list-menu");
