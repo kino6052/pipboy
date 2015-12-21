@@ -8,33 +8,33 @@ function Artist(context, applicationRunnerContext){
         globalStyle: {
             background: {
                 color: '#2D3129',
-                width: window.innerWidth
+                width: applicationRunnerContext.canvas.width // use the canvas property instead
             },
             header: {
-                lineWidth: applicationRunnerContext.canvas.width
+                lineWidth: applicationRunnerContext.canvas.width 
             },
             text: {
             	color: "#69FB8F",
             	fontSize: 20,
                 font: 'Arial Narrow',
                 position: {
-                	x: window.innerWidth/2 + 20,
-                	y: 430
+                	x: applicationRunnerContext.canvas.width/2 + 20,
+                	y: 400
                 },
                 size: {
-                	width: window.innerWidth/4,
+                	width: applicationRunnerContext.canvas.width/4,
                 	lineHeight: 20
                 }
             },
             image: {
             	
                 position: {
-                	x: window.innerWidth/2 + 20,
+                	x: applicationRunnerContext.canvas.width/2 + 20,
                 	y: 80
                 },
                 size: {
-                	width: window.innerWidth/4,
-                	height: window.innerWidth/4
+                	width: applicationRunnerContext.canvas.width/4,
+                	height: applicationRunnerContext.canvas.width/4
                 }
             },
             button: {
@@ -69,8 +69,8 @@ function Artist(context, applicationRunnerContext){
                         unselected: '#69FB8F'
                     }
                 },
-                position: {x: window.innerWidth/4 - 20, y: 80},
-                size: {width: window.innerWidth/4, height: 40},
+                position: {x: applicationRunnerContext.canvas.width/4 - 20, y: 80},
+                size: {width: applicationRunnerContext.canvas.width/4, height: 40},
                 offset: 10,
                 color: {
                     selected: '#69FB8F',
@@ -107,7 +107,7 @@ function Artist(context, applicationRunnerContext){
         	return size;//Math.floor(size * window.innerWidth/screen.width);
         },
         center: function(width, length){
-        	return this.responsiveHelper(this.globalStyle.background.width)/2 - width*length/2; 
+        	return applicationRunnerContext.canvas.width/2 - width*length/2; 
         },
         draw: function(type, name, index, selected){
         	
@@ -151,20 +151,19 @@ function Artist(context, applicationRunnerContext){
         			this.context.drawImage(image, x, y, width, height);
         			break;
         		case "text":
-        			
-        			var maxWidth = this.responsiveHelper(this.globalStyle.text.size.width);
+        			var maxWidth = document.getElementById("myCanvas").width/4;
         			var lineHeight = this.responsiveHelper(this.globalStyle.text.size.lineHeight);
-        			var x = this.responsiveHelper(this.globalStyle.text.position.x);
-        			var y = this.responsiveHelper(this.globalStyle.text.position.y);
+        			var x = this.globalStyle.text.position.x;
+        			var y = this.globalStyle.text.position.y;
         			this.context.fillStyle = this.globalStyle.text.color;
         			this.context.font = Math.floor(this.globalStyle.text.fontSize * window.innerWidth/1024) + "px " + this.globalStyle.text.font;
         			this.wrapText(name, x, y, maxWidth, lineHeight);
         			break;
         		case "header-button":
-        		    var width = this.responsiveHelper(this.globalStyle.headerButton.size.width);
-        		    var height = this.responsiveHelper(this.globalStyle.headerButton.size.height);
+        		    var width = this.globalStyle.headerButton.size.width;
+        		    var height = this.globalStyle.headerButton.size.height;
         		    var x = this.center(UI.head.getLength(), width); // centered position should not be normalized
-        		    var y = this.responsiveHelper(this.globalStyle.headerButton.position.y);
+        		    var y = this.globalStyle.headerButton.position.y;
         			if (selected == true){
         	    		// Start Drawing Button Box
         	    		this.context.beginPath();
