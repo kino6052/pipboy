@@ -14,397 +14,186 @@
 		canvas #myCanvas {
 			margin: 0;
 			padding: 0;
-			height: 100vh;
-			width: 100%;
+			height: 256;
+			width: 256;
+			overflow-x: visible;
 		}
 	</style>
-	<script src="http://threejs.org/build/three.min.js"></script>
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script src="application.js"></script>
+	<script src="artist.js"></script>
+	<script src="ui.js"></script>
 </head>
-
 <body>
+<script src="postProcessing/three.min.js"></script>
+<script src="postProcessing/CopyShader.js"></script>
+<script src="postProcessing/DotScreenShader.js"></script>
+<script src="postProcessing/RGBShiftShader.js"></script>
+<script src="postProcessing/FilmShader.js"></script>
+<script src="postProcessing/BadTVShader.js"></script>
+<script src="postProcessing/EffectComposer.js"></script>
+<script src="postProcessing/RenderPass.js"></script>
+<script src="postProcessing/StaticShader.js"></script>
+<script src="postProcessing/MaskPass.js"></script>
+<script src="postProcessing/ShaderPass.js"></script>
 
-		
-<img id="img" src="" style="display: none;">
-<canvas id="myCanvas">
+<img id="problem-solving" src="imgs/problem-solving.jpg" style="display: none;">
+<img id="communication" src="imgs/communication.png" style="display: none;">
+<img id="swiftness" src="imgs/swiftness.png" style="display: none;">
+<img id="curriosity" src="imgs/curriosity.png" style="display: none;">
+<img id="knowledge" src="imgs/knowledge.png" style="display: none;">
+<img id="personality" src="imgs/personality.png" style="display: none;">
+
+<img id="shmetterling" src="imgs/shmetterling.jpg" style="display: none;">
+<img id="feedmewell" src="imgs/feedmewell.png" style="display: none;">
+<img id="pictures-of-you" src="imgs/cure.jpg" style="display: none;">
+<img id="cashtagcu" src="imgs/cashtag.png" style="display: none;">
+<img id="igem" src="imgs/igem.png" style="display: none;">
+
+<canvas id="myCanvas" style="display: none">
 Your browser does not support the canvas element.
 </canvas>
 <canvas id="3DCanvas" style="display: none" width="100" height="100">
 Your browser does not support the canvas element.
 </canvas>
-<canvas id="postCanvas" width="1000" height="500" style="display: none">
+<canvas id="postProcessingCanvas" style="" width="500" height="500" >
 Your browser does not support the canvas element.
 </canvas>
+
+<script src="javascripts/cube.js"></script>
 <script>
-
-			var camera, scene, renderer;
-			var mesh;
-
-			init();
-			animate();
-
-			function init() {
-				
-				camera = new THREE.PerspectiveCamera( 70, 1, 1, 1000 );
-				camera.position.z = 400;
-
-				scene = new THREE.Scene();
-
-				var texture = THREE.ImageUtils.loadTexture( 'test.jpg' );
-
-				var geometry = new THREE.BoxGeometry( 200, 200, 200 );
-				var material = new THREE.MeshBasicMaterial( { map: texture } );
-
-				mesh = new THREE.Mesh( geometry, material );
-				scene.add( mesh );
-				var canvas = document.getElementById("3DCanvas")
-				renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
-				var color =new THREE.Color( 0xff0000 );
-				renderer.setClearColor( color , 0 );
-				renderer.setPixelRatio( window.devicePixelRatio );
-				renderer.setSize( window.innerWidth, window.innerHeight );
-				
-				document.body.appendChild( renderer.domElement );
-
-				//
-
-				window.addEventListener( 'resize', onWindowResize, false );
-
-			}
-
-			function onWindowResize() {
-
-				camera.aspect = window.innerWidth / window.innerHeight;
-				camera.updateProjectionMatrix();
-
-				renderer.setSize( window.innerWidth, window.innerHeight );
-
-			}
-
-			function animate() {
-
-				requestAnimationFrame( animate );
-
-				mesh.rotation.x += 0.005;
-				mesh.rotation.y += 0.01;
-
-				renderer.render( scene, camera );
-
-			}
-
-		</script>
-<script>
-	/* Global Vars */
+$(function(){// wait while document gets loaded
+	var ArtistObject;
+	var texture1, mesh1;
+	var camera, scene, renderer, composer;
+	var object, light;
+	var tvShader;
+	var time = 0;
 	
-	// CANVAS
-	var canvasObject = {
-		canvasIdTag: "myCanvas",
-		canvasDimensions: {x: document.body.clientWidth, y: document.body.clientHeight}
-	};
-    /*
-    *  APPLIACTION RUNNER
-    *  Purpose: Create Application and Refresh it Every Frame
-    */
-	var ApplicationRunner = {};
-	
-	ApplicationRunner.canvasContext = null;
-	ApplicationRunner.canvas = null;
-	ApplicationRunner.currentlySelectedButton = null;
-	
-	ApplicationRunner.UI = {
-		header: [], 
-		subHeader: null,
-		items: null,
-		window: null
-	};
-	
-	ApplicationRunner.initializeCanvas = function(canvasIdTag, canvasDimensions){
-		var canvas = document.getElementById(canvasIdTag);
-		canvas.width = canvasDimensions.x; //document.width is obsolete
-	    canvas.height = canvasDimensions.y; //document.height is obsolete
-		var context = canvas.getContext("2d");
-		this.canvasContext = context;
-		this.ThreeDCanvas = document.getElementById("3DCanvas");
-		this.ThreeDCanvasContext = document.getElementById("3DCanvas").getContext("webgl");
-		
-		this.canvas = canvas;
-		return context;
-	};
-	
-	ApplicationRunner.runAnimationLoop = function(callback){
-		callback();
-		setTimeout(function(){
-			ApplicationRunner.runAnimationLoop(callback);
-		}, 1000/60);
-	};
-	
-	/*
-    *  UI 
-    *  Purpose: Modular object that allows to easy modify parameters of UI components
-    */
-    var UI = {};
-    
-    UI.button = function(){
-    	return {
-    		selected: false,
-			direction: "horizontal",
-			offset: {x: 20, y: 0},
-    		buttonBox: {x: 0, y: 0, width: 100, height: 40, fillStyle: {selected: "#2D3129", unselected: "#2D3129"}},
-    		text: {value: "", font: "30px Arial Narrow", fillStyle: {selected: "#69FB8F", unselected: "#69FB8F"}}
-    	};
-    },
-    
-    UI.background = {
-    	draw: function(){
-    		Artist.draw("background", {color: "#2D3129"});
-    	}	
-    },
-    
-    UI.header = {
-    	buttons: [
-    		{
-    			name: "STAT",
-    			response: function(){},
-    			buttonParameters: UI.button()
-    		}, 
-    		{
-    			name: "SKILLS",
-    			response: function(){alert("Woohoo!");},
-    			buttonParameters: UI.button()
-    		},
-    		{
-    			name: "PROJ",
-    			response: function(){},
-    			buttonParameters: UI.button()
-    		},
-    		{
-    			name: "CONT",
-    			response: function(){},
-    			buttonParameters: UI.button()
-    		},
-    		{
-    			name: "RADIO",
-    			response: function(){},
-    			buttonParameters: UI.button()
-    		}
-    	],
-    	
-    	draw: function(){
-    		Artist.draw("header-line", null);
-    		for (var buttonIndex = 0; buttonIndex < this.buttons.length; buttonIndex++){
-    			var centeredPosition = ApplicationRunner.canvas.width/2 - this.buttons.length*(this.buttons[0].buttonParameters.buttonBox.width + this.buttons[0].buttonParameters.offset.x)/2;
-    			this.buttons[buttonIndex].buttonParameters.buttonBox.x = centeredPosition + buttonIndex*this.buttons[buttonIndex].buttonParameters.buttonBox.width + this.buttons[buttonIndex].buttonParameters.offset.x*buttonIndex;
-    			this.buttons[buttonIndex].buttonParameters.buttonBox.y = 0;
-    			this.buttons[buttonIndex].buttonParameters.text.value = this.buttons[buttonIndex].name;
-    			Artist.draw("header-button", this.buttons[buttonIndex].buttonParameters);
-    		}
-    		
-    	}	
-    };
-    
-    UI.stats = {
-    	items: [
-    		{
-    			name: "Strength",
-    			response: null,
-    			buttonParameters: UI.button()
-    		},
-    		{
-    			name: "Perception",
-    			response: null,
-    			buttonParameters: UI.button()
-    		},
-    		{
-    			name: "Endurance",
-    			response: null,
-    			buttonParameters: UI.button()
-    		},
-    		{
-    			name: "Charisma",
-    			response: null,
-    			buttonParameters: UI.button()
-    		},
-    		{
-    			name: "Agility",
-    			response: null,
-    			buttonParameters: UI.button()
-    		},
-    		{
-    			name: "Luck",
-    			response: null,
-    			buttonParameters: UI.button()
-    		}
-    	],
-    	
-    	draw: function(){
-    		this.items[0].buttonParameters.selected = true;
-    		for (var itemIndex = 0; itemIndex < this.items.length; itemIndex++){
-    			this.items[itemIndex].buttonParameters.buttonBox.width = 400;
-    			var centeredPosition = ApplicationRunner.canvas.width/2 - UI.stats.items[0].buttonParameters.buttonBox.width;
-    			this.items[itemIndex].buttonParameters.buttonBox.x = centeredPosition;
-    			this.items[itemIndex].buttonParameters.buttonBox.y = UI.header.buttons[0].buttonParameters.buttonBox.height*2 + itemIndex*this.items[itemIndex].buttonParameters.buttonBox.height + this.items[itemIndex].buttonParameters.offset.y*itemIndex;
-    			
-    			this.items[itemIndex].buttonParameters.buttonBox.fillStyle.selected = "#69FB8F";
-    			this.items[itemIndex].buttonParameters.text.value = this.items[itemIndex].name;
-    			this.items[itemIndex].buttonParameters.text.fillStyle.selected = "#2D3129";
-    			this.items[itemIndex].buttonParameters.value = "50";
-    			Artist.draw("item-button", this.items[itemIndex].buttonParameters);
-    		}
-    	}
-    };
-    
-    /*
-    *  ARTIST 
-    *  Purpose: Responsible for drawing the UI components
-    */
-    var Artist = {};
-    Artist.context = null;
-    Artist.wrapText = function(text, x, y, maxWidth, lineHeight) {
-        var words = text.split(' ');
-        var line = '';
-
-        for(var n = 0; n < words.length; n++) {
-          var testLine = line + words[n] + ' ';
-          var metrics = ApplicationRunner.canvasContext.measureText(testLine);
-          var testWidth = metrics.width;
-          if (testWidth > maxWidth && n > 0) {
-            ApplicationRunner.canvasContext.fillText(line, x, y);
-            line = words[n] + ' ';
-            y += lineHeight;
-          }
-          else {
-            line = testLine;
-          }
-        }
-        ApplicationRunner.canvasContext.fillText(line, x, y);
-      };
-    Artist.draw = function(type, parameters){
-    	this.context.lineWidth = 2;
-    	switch(type){
-    		case "background":
-    			this.context.beginPath();
-				this.context.fillStyle = parameters.color;
-				this.context.rect(0, 0, document.body.clientWidth, document.body.clientHeight);
-				this.context.fill();
-				break;
-				
-    		case "header-button":
-    			if (parameters.selected == true){
-		    		// Start Drawing Button Box
-		    		this.context.beginPath();
-					this.context.fillStyle = parameters.buttonBox.fillStyle.unselected;
-					this.context.rect(parameters.buttonBox.x , parameters.buttonBox.y, parameters.buttonBox.width, parameters.buttonBox.height);
-					this.context.fill();
-					// Selected Notches
-					this.context.beginPath();
-					this.context.moveTo(parameters.buttonBox.x , parameters.buttonBox.y + parameters.buttonBox.height);
-					this.context.lineTo(parameters.buttonBox.x , parameters.buttonBox.y + parameters.buttonBox.height/2);
-					this.context.stroke();
-					this.context.beginPath();
-					this.context.moveTo(parameters.buttonBox.x + parameters.buttonBox.width, parameters.buttonBox.y + parameters.buttonBox.height);
-					this.context.lineTo(parameters.buttonBox.x + parameters.buttonBox.width , parameters.buttonBox.y + parameters.buttonBox.height/2);
-					this.context.stroke();
-    			}
-				// Text
-				this.context.fillStyle = parameters.text.fillStyle.unselected;
-				this.context.font = parameters.text.font;
-				this.context.fillText(parameters.text.value, parameters.buttonBox.x + 5, parameters.buttonBox.y + 30);
-				
-				break;
-			
-			case "item-button":
-				this.context.fillStyle = parameters.text.fillStyle.unselected;
-				
-    			if (parameters.selected == true){
-		    		// Start Drawing Button Box
-		    		this.context.beginPath();
-					this.context.fillStyle = parameters.buttonBox.fillStyle.selected;
-					this.context.rect(parameters.buttonBox.x , parameters.buttonBox.y, parameters.buttonBox.width, parameters.buttonBox.height);
-					this.context.fill();
-					this.context.fillStyle = parameters.text.fillStyle.selected;
-    			}
-				// Text
-				this.context.font = parameters.text.font;
-				this.context.fillText(parameters.text.value, parameters.buttonBox.x + 5, parameters.buttonBox.y + 30);
-				this.context.fillText(parameters.value, parameters.buttonBox.x + parameters.buttonBox.width - 50 , parameters.buttonBox.y + 30);
-				break;	
-			
-			case "header-line":
-				this.context.beginPath();
-				this.context.strokeStyle = "#69FB8F";
-				this.context.moveTo(0,39);
-				this.context.lineTo(ApplicationRunner.canvas.width,39);
-				this.context.stroke();
-				break;
+	$("body").keypress(function(ev){
+		if (ev.keyCode == 115 || ev.keyCode == 119 || ev.keyCode == 100 || ev.keyCode == 97 || ev.keyCode == 65 || ev.keyCode == 68 || ev.keyCode == 83 || ev.keyCode == 87){
+			tvShader.uniforms['distortion'].value = 5;
+			tvShader.uniforms['distortion2'].value = 5;
+			setTimeout(function(){
+				tvShader.uniforms['distortion'].value = 0.2;
+				tvShader.uniforms['distortion2'].value = 0.4;
+			}, 50);
 		}
-				
-    };
-	
+	});
 	/*
 	 * ENTRY POINT
 	 */
-	Artist.context = ApplicationRunner.initializeCanvas(canvasObject.canvasIdTag, canvasObject.canvasDimensions);
-	ApplicationRunner.UI.header = UI.header.buttons;
-	ApplicationRunner.runAnimationLoop(function(){
-		UI.background.draw();
-		UI.stats.draw();
-		UI.header.draw();
-		ApplicationRunner.canvasContext.drawImage(ApplicationRunner.ThreeDCanvas, ApplicationRunner.canvas.width/2 + 100, 80, 200, 200);
-		Artist.wrapText("Strength is a measure of your raw physical power!", ApplicationRunner.canvas.width/2 + 100, 320, 200, 30);
-		var ImageData = ApplicationRunner.canvasContext.getImageData(0, 0, ApplicationRunner.canvas.width, ApplicationRunner.canvas.height);
-		var data = ImageData.data;
-		var counter = 0;
-		var switcher = 0;
-		for (var i = 0; i < data.length; i += 4) {
-			if (switcher){
-				data[i]     = counter%3==0?data[i+1]:data[i]-10; // red
-		        data[i + 1] = counter%3==1?data[i+1]:data[i+1]-10; // green
-		        data[i + 2] = counter%3==2?data[i+2]:data[i+2]-10; // blue
-			}
-		  	
-	      	counter++;
-	      	switcher = !switcher;
-	    }
-	    ApplicationRunner.canvasContext.putImageData(ImageData, 0, 0);
-		/*
-		ApplicationRunner.postProcessingCanvasContext.drawImage(ApplicationRunner.canvas, 0, 0);
-		var imageData = ApplicationRunner.postProcessingCanvasContext.getImageData(0,0,1000,500);
-		var data = imageData.data;
-		var counter = 0;
-		for (var i = 0; i < data.length; i += 4) {
-		  if (counter%3==0){
-		  	data[i]     = (i)%3==0?data[i]:10;     // red
-	        data[i + 1] = (i)%3==1?data[i+1]:10; // green
-	        data[i + 2] = (i)%3==2?data[i+2]:10; // blue
-		  }
-	      counter++;
-	    }
-	    ApplicationRunner.postProcessingCanvasContext.putImageData(imageData, 0, 0);
-	    */
+	// Inititalize Application Runner
+	ApplicationRunner.initializeCanvas("myCanvas", {x: 1024, y: 1024});
+	
+	// Initialize Controls
+	ApplicationRunner.initializeControls();
+	
+	init();
+	animate();
+	
+	function init() {
+		var canvas = document.getElementById("postProcessingCanvas")
+		renderer = new THREE.WebGLRenderer({canvas:canvas});
+		renderer.setClearColor("#2D3129", 1);
+		renderer.setPixelRatio( window.devicePixelRatio );
+		renderer.setSize( window.innerWidth, window.innerHeight );
+		document.body.appendChild( renderer.domElement );
+	
+		//
+	
+		camera = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, 0, 100  );
+		camera.position.z = 0;
+		camera.position.y = 0;
+		
+		scene = new THREE.Scene();
+		scene.fog = new THREE.Fog( 0x000000, 1, 1000 );
+			
+		// Initialize Artist
+		ArtistObject = Artist(ApplicationRunner.canvasContext, ApplicationRunner);
+	
+	
+		texture1 = new THREE.Texture(document.getElementById("myCanvas"));//myCanvas"));
+		texture1.needsUpdate = true;
+		var material1 = new THREE.MeshBasicMaterial( {map: texture1, side: THREE.DoubleSide} );
+		var geometry = new THREE.PlaneGeometry( 1024, 1024 );
+		mesh1 = new THREE.Mesh( geometry, material1 );
+		mesh1.position.set(0, -256, 0);
+	
+		scene.add( mesh1 );
+		scene.add( new THREE.AmbientLight( 0x222222 ) );
+	
+		light = new THREE.DirectionalLight( 0xffffff );
+		light.position.set( 1, 1, 1 );
+		scene.add( light );
+	
+		// postprocessing
+		composer = new THREE.EffectComposer( renderer );
+		composer.addPass( new THREE.RenderPass( scene, camera ) );
+	
+		//var effect = new THREE.ShaderPass( THREE.DotScreenShader );
+		//effect.uniforms[ 'scale' ].value = 4;
+		//composer.addPass( effect );
+		
+		var effect = new THREE.ShaderPass( THREE.BadTVShader );
+		tvShader = effect;
+		effect.uniforms[ 'distortion' ].value = 0.2;
+		effect.uniforms[ 'distortion2' ].value = 0.4;
+		effect.uniforms[ 'rollSpeed' ].value = 0;
+		composer.addPass( effect );
+		
+		var effect = new THREE.ShaderPass( THREE.RGBShiftShader );
+		effect.uniforms[ 'amount' ].value = 0.0015;
+		//effect.renderToScreen = true;
+		composer.addPass( effect );
+		
+		
+		var effect = new THREE.ShaderPass( THREE.FilmShader );
+		effect.uniforms[ "grayscale" ].value = 0;
+		effect.uniforms[ "sCount" ].value = 800;
+		effect.uniforms[ "sIntensity" ].value = 0.9;
+		effect.uniforms[ "nIntensity" ].value = 0.4;
+		
+		composer.addPass( effect );
+		
+		var effect = new THREE.ShaderPass( THREE.StaticShader );
+		effect.renderToScreen = true;
+		composer.addPass( effect );
+	
+		window.addEventListener( 'resize', onWindowResize, false );
+	
+	}
+	
+	function onWindowResize() {
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+		renderer.setSize( window.innerWidth, window.innerHeight );
+		init();
+	}
+	
+	var counter = 0; 
+	function animate() {
+		requestAnimationFrame( animate );
+	
+		//object.rotation.x += 0.005;
+		//object.rotation.y += 0.01;
+		
+		//console.log(ApplicationRunner.selectedButton);
+		ArtistObject.draw("background");
+		ArtistObject.draw("header");
+		ArtistObject.draw("list-menu");
+		ArtistObject.draw("content");
+		ArtistObject.draw("instructions", time);
+		
+		tvShader.uniforms["time"].value = time;
+		mesh1.material.map.needsUpdate = true;
+		
+		composer.render();
+		time+=0.5;
+		//counter = (counter + 1) % 4;
+	}
 	});
-	
-	document.onkeypress=function(ev){
-		if (ev.keyCode == 13){
-			ApplicationRunner.currentlySelectedButton.response();
-		}
-		else{
-			var listLength = UI.header.buttons.length;
-			for (var i=0; i<listLength; i++){
-				if (UI.header.buttons[i].buttonParameters.selected) {
-					UI.header.buttons[i].buttonParameters.selected = false;
-					UI.header.buttons[(i+1)%listLength].buttonParameters.selected = true;
-					ApplicationRunner.currentlySelectedButton = UI.header.buttons[(i+1)%listLength];
-					return;
-				}
-			}
-			UI.header.buttons[0].buttonParameters.selected = true;
-			ApplicationRunner.currentlySelectedButton = UI.header.buttons[0];
-		}
-	};
-	
-	
-	
-	
-</script>
 
+</script>
 </body>
 </html>
