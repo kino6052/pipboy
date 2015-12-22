@@ -19,7 +19,7 @@ function Artist(context, applicationRunnerContext){
                 font: 'Arial Narrow',
                 position: {
                 	x: applicationRunnerContext.canvas.width/2 + 20,
-                	y: 400
+                	y: 430
                 },
                 size: {
                 	width: applicationRunnerContext.canvas.width/4,
@@ -30,7 +30,7 @@ function Artist(context, applicationRunnerContext){
             	
                 position: {
                 	x: applicationRunnerContext.canvas.width/2 + 20,
-                	y: 80
+                	y: 150
                 },
                 size: {
                 	width: applicationRunnerContext.canvas.width/4,
@@ -56,7 +56,7 @@ function Artist(context, applicationRunnerContext){
                     font: 'Arial Narrow',
                     
                 },
-                position: {x: 0, y: 0},
+                position: {x: 0, y: 80},
                 size: {width: 200, height: 50},
                 offset: 10
             },
@@ -69,7 +69,7 @@ function Artist(context, applicationRunnerContext){
                         unselected: '#69FB8F'
                     }
                 },
-                position: {x: applicationRunnerContext.canvas.width/4 - 20, y: 80},
+                position: {x: applicationRunnerContext.canvas.width/4 - 20, y: 150},
                 size: {width: applicationRunnerContext.canvas.width/4, height: 40},
                 offset: 10,
                 color: {
@@ -112,6 +112,11 @@ function Artist(context, applicationRunnerContext){
         draw: function(type, name, index, selected){
         	
         	switch(type){
+        	    case "instructions":
+        	        this.context.font = "30px Arial Narrow";
+        	        this.context.fillStyle = 'rgba(255,255,255,' + Math.abs(-1 + (name/20 % 2.0)) + ')';
+        	        this.context.fillText("USE AWSD KEYS TO NAVIGATE", applicationRunnerContext.canvas.width/2 , 30);
+        	        break;
         		case "background":
         			this.context.beginPath();
         			this.context.fillStyle = this.globalStyle.background.color;
@@ -151,7 +156,7 @@ function Artist(context, applicationRunnerContext){
         			this.context.drawImage(image, x, y, width, height);
         			break;
         		case "text":
-        			var maxWidth = document.getElementById("myCanvas").width/4;
+        			var maxWidth = document.getElementById("myCanvas").width/3;
         			var lineHeight = this.responsiveHelper(this.globalStyle.text.size.lineHeight);
         			var x = this.globalStyle.text.position.x;
         			var y = this.globalStyle.text.position.y;
@@ -188,7 +193,6 @@ function Artist(context, applicationRunnerContext){
         			this.context.fillText(name, offset + x + width*index + this.responsiveHelper(5), y + this.responsiveHelper(35));
         			break;
         		case "list-menu-button":
-        		    
         		    var width = this.responsiveHelper(this.globalStyle.listMenuButton.size.width);
         		    var height = this.responsiveHelper(this.globalStyle.listMenuButton.size.height);
         		    var x = this.responsiveHelper(this.globalStyle.listMenuButton.position.x);
@@ -228,7 +232,7 @@ function Artist(context, applicationRunnerContext){
         		    break;
         		case "header-line":
                     this.context.lineWidth = 2;
-        		    var height = this.responsiveHelper(this.globalStyle.headerButton.size.height);
+        		    var height = this.responsiveHelper(this.globalStyle.headerButton.size.height + this.globalStyle.headerButton.position.y);
         			this.context.beginPath();
         			this.context.strokeStyle = "#69FB8F";
         			this.context.moveTo(0, height-1);

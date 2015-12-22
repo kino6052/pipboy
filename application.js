@@ -33,22 +33,19 @@
 	    this.selectedButton = UI.head; // first button from the header menu
 	    this.selectedListMenuButton = UI.head.listHead; // first button from the list menu
 	    $("body").keypress(function(ev){
-    		if (ev.keyCode == 13){
-    			
-    		}
-    		else if (ev.keyCode == 113){
-    			
+	    	console.log(ev.keyCode);
+    		if (ev.keyCode == 97 || ev.keyCode == 65){ // A
     		    ApplicationRunner.selectedButton = ApplicationRunner.selectedButton.selectPrev();
     		    ApplicationRunner.selectedListMenuButton = ApplicationRunner.selectedButton.listHead;
     		}
-    		else if (ev.keyCode == 119){
+    		else if (ev.keyCode == 100 || ev.keyCode == 68){ // D
     			ApplicationRunner.selectedButton = ApplicationRunner.selectedButton.selectNext();
     			ApplicationRunner.selectedListMenuButton = ApplicationRunner.selectedButton.listHead;
     		}
-    		else if (ev.keyCode == 97) {
+    		else if (ev.keyCode == 119 || ev.keyCode == 87) { // W
     		    ApplicationRunner.selectedListMenuButton = ApplicationRunner.selectedListMenuButton.selectPrev(ApplicationRunner.selectedButton.listTail);
     		}
-    		else if (ev.keyCode == 115) {
+    		else if (ev.keyCode == 115 || ev.keyCode == 83) { // S
     		    ApplicationRunner.selectedListMenuButton = ApplicationRunner.selectedListMenuButton.selectNext(ApplicationRunner.selectedButton.listHead);
     		}
     	});

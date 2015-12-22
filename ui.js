@@ -5,42 +5,42 @@ var json = [
                 "Problem Solving": {
                     rating: "80/100",
                     imageId: "problem-solving",
-                    text: "1 Strong problem solving skills. Not afraid tackling new problems and think outside the box."
+                    text: "Strong problem solving skills. Not afraid tackling new problems and think outside the box. This canvas based website proved to be problematic, but careful examination of technologies and breaking problems into subproblems made it possible."
                 }
             },
             {
                 "Communication": {
                     rating: "75/100",
                     imageId: "communication",
-                    text: "2 Strong problem solving skills. Not afraid tackling new problems and think outside the box."
+                    text: "Great written and verbal communication skills. Empathic listener and persuasive speaker. Excellecnt presentation skills."
                 }
             },
             {
                 "Swiftness": {
                     rating: "90/100",
                     imageId: "swiftness",
-                    text: "3 Strong problem solving skills. Not afraid tackling new problems and think outside the box."
+                    text: "I rapidly grasp new concepts and ideas and acquire new skills. In order to build this website, I had to learn both 2d and webgl contexts for HTML5 canvas. "
                 }
             },
             {
                 "Curiosity": {
                     rating: "80/100",
-                    imageId: "problem-solving",
-                    text: "4 Strong problem solving skills. Not afraid tackling new problems and think outside the box."
+                    imageId: "curriosity",
+                    text: "I am very curious about new technologies and like to get my hands on them."
                 }
             },
             {
                 "Knowledge": {
                     rating: "80/100",
-                    imageId: "problem-solving",
-                    text: "5 Strong problem solving skills. Not afraid tackling new problems and think outside the box."
+                    imageId: "knowledge",
+                    text: "I am knowledgable about computers and programming. I understand computers as systems and able to work with fundamentals."
                 }
             },
             {
                 "Personality": {
                     rating: "80/100",
-                    imageId: "problem-solving",
-                    text: "6 Strong problem solving skills. Not afraid tackling new problems and think outside the box."
+                    imageId: "personality",
+                    text: "I am a very loyal, respectful and responsible individual. I value the team I am working in as much as getting things done."
                 }
             }
         ]
@@ -49,38 +49,38 @@ var json = [
         "SKILLS": [
             {
                 "HTML5": {
-                    imageId: "html5",
-                    text: "Strong problem solving skills. Not afraid tackling new problems and think outside the box."
+                    imageId: "3DCanvas",
+                    text: "I have significant experience bootstrapping HTML5 websites and making robust cross-browser experiences."
                 }
             },
             {
                 "JavaScript": {
-                    imageId: "javascript",
-                    text: "Strong problem solving skills. Not afraid tackling new problems and think outside the box."
+                    imageId: "3DCanvas",
+                    text: "The Web is speaking JavaScript and so do I. I love JavaScript for what it is and I learned how to avoid the 'not so well' designed features of the language."
                 }
             },
             {
                 "jQuery": {
-                    imageId: "jquery",
-                    text: "Strong problem solving skills. Not afraid tackling new problems and think outside the box."
+                    imageId: "3DCanvas",
+                    text: "As a higher level framework for front-end, I choose jQuery. It has limiteless capability and it feels like JavaScript gravy."
                 }
             },
             {
                 "NodeJS": {
-                    imageId: "nodejs",
-                    text: "Strong problem solving skills. Not afraid tackling new problems and think outside the box."
+                    imageId: "3DCanvas",
+                    text: "I like having NodeJS on the backend. It is a great backend runtime environment, and it is non blocking for users which makes it stand out."
                 }
             },
             {
                 "CSS": {
-                    imageId: "css",
+                    imageId: "3DCanvas",
                     text: "Strong problem solving skills. Not afraid tackling new problems and think outside the box."
                 }
             },
             {
                 "MongoDB": {
-                    imageId: "mongodb",
-                    text: "Strong problem solving skills. Not afraid tackling new problems and think outside the box."
+                    imageId: "3DCanvas",
+                    text: "I can't imaging working on the backend without mongo. Mongo and Node.js are unseparable for me.  "
                 }
             }
         ]
@@ -90,31 +90,31 @@ var json = [
             {
                 "Shmetterling": {
                     imageId: "shmetterling",
-                    text: "Strong problem solving skills. Not afraid tackling new problems and think outside the box."
+                    text: "Shmetterling is a web application I wrote on the 2015 local hack day. It's purpose is to create music-video 'radio' stations and free you of the need to create playlists on youtube. It uses Spotify and YouTube API."
                 }
             },
             {
                 "FeedMeWell": {
                     imageId: "feedmewell",
-                    text: "Strong problem solving skills. Not afraid tackling new problems and think outside the box."
+                    text: "FeedMeWell is an app that aims to order you food from local restaurants based on the calorie demands you have."
                 }
             },
             {
                 "Pictures of You": {
                     imageId: "pictures-of-you",
-                    text: "Strong problem solving skills. Not afraid tackling new problems and think outside the box."
+                    text: "Pictures of You was my final project for the computer graphics class. While creating this project I got to examine webgl from the very bottom up to post-processing."
                 }
             },
             {
                 "CashTagCU": {
                     imageId: "cashtagcu",
-                    text: "Strong problem solving skills. Not afraid tackling new problems and think outside the box."
+                    text: "CashtagCU was my first official Three.js project, in which I use CSS3D renderer to display tiles with Twits onto 3d space."
                 }
             },
             {
                 "iGem 2014": {
                     imageId: "igem",
-                    text: "Strong problem solving skills. Not afraid tackling new problems and think outside the box."
+                    text: "iGem 2014 was a website designed for the synthetic biology competition. It was tailored such that it can be displayed in a wiki format for easy modification."
                 }
             }
         ]
@@ -174,7 +174,7 @@ var json = [
                         newListMenuButton.text = listMenuObject[listMenuKey].text;
                         newListMenuButton.imageId = listMenuObject[listMenuKey].imageId;
                     }
-                    console.log(UI.tail.listTail);
+                    //console.log(UI.tail.listTail);
                 });
             }
             else {
@@ -208,7 +208,7 @@ var json = [
                         newListMenuButton.text = listMenuObject[listMenuKey].text;
                         newListMenuButton.imageId = listMenuObject[listMenuKey].imageId;
                     }
-                    console.log(UI.tail.listTail);
+                    //console.log(UI.tail.listTail);
                 });
             }
         });

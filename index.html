@@ -16,6 +16,7 @@
 			padding: 0;
 			height: 256;
 			width: 256;
+			overflow-x: visible;
 		}
 	</style>
 	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
@@ -35,8 +36,20 @@
 <script src="postProcessing/StaticShader.js"></script>
 <script src="postProcessing/MaskPass.js"></script>
 <script src="postProcessing/ShaderPass.js"></script>
-		
-<img id="problem-solving" src="test.jpg" style="display: none;">
+
+<img id="problem-solving" src="imgs/problem-solving.jpg" style="display: none;">
+<img id="communication" src="imgs/communication.png" style="display: none;">
+<img id="swiftness" src="imgs/swiftness.png" style="display: none;">
+<img id="curriosity" src="imgs/curriosity.png" style="display: none;">
+<img id="knowledge" src="imgs/knowledge.png" style="display: none;">
+<img id="personality" src="imgs/personality.png" style="display: none;">
+
+<img id="shmetterling" src="imgs/shmetterling.jpg" style="display: none;">
+<img id="feedmewell" src="imgs/feedmewell.png" style="display: none;">
+<img id="pictures-of-you" src="imgs/cure.jpg" style="display: none;">
+<img id="cashtagcu" src="imgs/cashtag.png" style="display: none;">
+<img id="igem" src="imgs/igem.png" style="display: none;">
+
 <canvas id="myCanvas" style="display: none">
 Your browser does not support the canvas element.
 </canvas>
@@ -47,7 +60,7 @@ Your browser does not support the canvas element.
 Your browser does not support the canvas element.
 </canvas>
 
-
+<script src="javascripts/cube.js"></script>
 <script>
 $(function(){// wait while document gets loaded
 	var ArtistObject;
@@ -58,10 +71,7 @@ $(function(){// wait while document gets loaded
 	var time = 0;
 	
 	$("body").keypress(function(ev){
-		if (ev.keyCode == 13){
-			
-		}
-		else if (ev.keyCode == 113 || ev.keyCode == 119 || ev.keyCode == 97 || ev.keyCode == 115){
+		if (ev.keyCode == 115 || ev.keyCode == 119 || ev.keyCode == 100 || ev.keyCode == 97 || ev.keyCode == 65 || ev.keyCode == 68 || ev.keyCode == 83 || ev.keyCode == 87){
 			tvShader.uniforms['distortion'].value = 5;
 			tvShader.uniforms['distortion2'].value = 5;
 			setTimeout(function(){
@@ -133,7 +143,7 @@ $(function(){// wait while document gets loaded
 		composer.addPass( effect );
 		
 		var effect = new THREE.ShaderPass( THREE.RGBShiftShader );
-		effect.uniforms[ 'amount' ].value = 0.003;
+		effect.uniforms[ 'amount' ].value = 0.0015;
 		//effect.renderToScreen = true;
 		composer.addPass( effect );
 		
@@ -173,6 +183,7 @@ $(function(){// wait while document gets loaded
 		ArtistObject.draw("header");
 		ArtistObject.draw("list-menu");
 		ArtistObject.draw("content");
+		ArtistObject.draw("instructions", time);
 		
 		tvShader.uniforms["time"].value = time;
 		mesh1.material.map.needsUpdate = true;
