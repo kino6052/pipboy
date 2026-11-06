@@ -1,26 +1,22 @@
-     ,-----.,--.                  ,--. ,---.   ,--.,------.  ,------.
-    '  .--./|  | ,---. ,--.,--. ,-|  || o   \  |  ||  .-.  \ |  .---'
-    |  |    |  || .-. ||  ||  |' .-. |`..'  |  |  ||  |  \  :|  `--, 
-    '  '--'\|  |' '-' ''  ''  '\ `-' | .'  /   |  ||  '--'  /|  `---.
-     `-----'`--' `---'  `----'  `---'  `--'    `--'`-------' `------'
-    ----------------------------------------------------------------- 
+# CRT terminal portfolio
 
+Kirill Novik's retro portfolio, first built in 2015 as a student project. The menu is drawn on a 2D canvas, then shown through a WebGL 2 shader that adds screen curvature, scanlines and signal noise.
 
-Hi there! Welcome to Cloud9 IDE!
+Live at https://kino6052.github.io/pipboy/
 
-To get you started, we included a small hello world application.
+```bash
+pnpm install
+pnpm dev
+pnpm build
+```
 
-1) Open the hello-world.html file
+`pnpm build` writes `index.html` and `assets/` to the repo root, which GitHub Pages serves from the `gh-pages` branch.
 
-2) Click on the Preview button to open a live preview pane
+## How it works
 
-3) Make some changes to the file, save, watch the preview, and have fun!
+- `src/content.ts`: everything the terminal says
+- `src/screen.ts`: draws the menu and returns clickable areas
+- `src/crt.ts`: the WebGL 2 shader, which uses the menu canvas as a texture
+- `src/main.ts`: state, keyboard, mouse and touch
 
-Happy coding!
-The Cloud9 IDE team
-
-
-## Support & Documentation
-
-Visit http://docs.c9.io for documentation, or http://support.c9.io for support.
-To watch some training videos, visit http://www.youtube.com/user/c9ide
+Images in `src/public/images` are tinted phosphor green. Items without an image show a spinning wireframe. There are no runtime dependencies. The page also holds the same content as plain HTML for screen readers and search engines, and it's what you see without WebGL 2.
